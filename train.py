@@ -2,67 +2,35 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import load
+from utils import load, plot_history
+from models import custom_conv_net
 
+train_dataset, val_dataset = load(csv="pokemon_image_dataset.csv", image_path="./images/pokemon_image_dataset")
 
-csv = "pokemon_image_dataset.csv"
-image_path = "./images"
+train_dataset2, val_dataset2 = load(csv="synthetic_pokemon.csv", image_path="./synthetic_images")
 
-dataset = load(csv, image_path)
+model1 = custom_conv_net((120,120,4))
 
-# dataset.save('pokemon_image_dataset')
+model2 = custom_conv_net((120,120,3))
 
-# dataset = tf.data.Dataset.load('pokemon_image_dataset')
+histories = []
 
-model = models.Sequential([
-    # Input layer (not explicitly needed in Sequential, but shows input shape)
-    layers.InputLayer(shape=(120, 120, 4)),
-    
-    # Add some convolutional layers
-    layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
-    layers.MaxPooling2D((2, 2)),
-    
-    layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-    layers.MaxPooling2D((2, 2)),
-    
-    layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-    layers.MaxPooling2D((2, 2)),
-    
-    # Flatten the output
-    layers.Flatten(),
-    
-    # Dense layers
-    layers.Dense(64, activation='relu'),
-
-    # Two output layers for both types
-    layers.Dense(20, activation='softmax', name='type1'), 
-    layers.Dense(20, activation='softmax', name='type2')
-])
-
-# Compile the model
-model.compile(optimizer='adam',
-              loss={
-                  'type1':'sparse_categorical_crossentropy',
-                  'type2':'sparse_categorical_crossentropy'
-                },
-              metrics={
-                  'type1':'accuracy',
-                  'type2':'accuracy'
-              })
-
-history = model.fit(
-    dataset,
-    epochs = 10,
+history1 = model1.fit(
+    train_dataset,
+    epochs = 20,
+    validation_data = val_dataset,
     verbose = 1
 )
 
-print("Training History:", history.history)
+histories.append(history1)
 
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.plot(history.history['accuracy'], label='Training Accuracy')
-plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Metrics')
-plt.legend()
-plt.show()
+history2 = model2.fit(
+    train_dataset2,
+    epochs = 20,
+    validation_data = val_dataset2,
+    verbose = 1
+)
+
+histories.append(history2)
+
+plot_history(histories)
