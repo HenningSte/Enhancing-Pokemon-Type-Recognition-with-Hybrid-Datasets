@@ -3,15 +3,15 @@ from tensorflow.keras import layers, models
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import load, plot_history
-from models import custom_conv_net
+from models import own_custom_conv_net, neuralmon_conv_net, smaller_VGGNet, custom_CNN_model
 
 train_dataset, val_dataset = load(csv="pokemon_image_dataset.csv", image_path="./images/pokemon_image_dataset")
 
 train_dataset2, val_dataset2 = load(csv="synthetic_pokemon.csv", image_path="./synthetic_images")
 
-model1 = custom_conv_net((120,120,4))
+model1 = custom_CNN_model((120,120,4))
 
-model2 = custom_conv_net((120,120,3))
+model2 = custom_CNN_model((120,120,3))
 
 histories = []
 
@@ -21,7 +21,6 @@ history1 = model1.fit(
     validation_data = val_dataset,
     verbose = 1
 )
-
 histories.append(history1)
 
 history2 = model2.fit(
@@ -30,7 +29,6 @@ history2 = model2.fit(
     validation_data = val_dataset2,
     verbose = 1
 )
-
 histories.append(history2)
 
 plot_history(histories)
