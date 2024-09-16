@@ -163,7 +163,7 @@ def data_exploration(csv):
     plt.show()
 
 if __name__ == '__main__':
-    create_csv_synthetic(dataset_name='synthetic_pokemon')
+    #create_csv_synthetic(dataset_name='synthetic_pokemon')
     csv = "pokemon_image_dataset.csv"
     csv2 = "synthetic_pokemon.csv"
     #data_exploration(csv)
