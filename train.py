@@ -7,7 +7,7 @@ from models import own_custom_conv_net, neuralmon_conv_net, smaller_VGGNet, cust
 
 train_dataset, val_dataset = load(csv="pokemon_image_dataset.csv", image_path="./images/pokemon_image_dataset")
 
-train_dataset2, val_dataset2 = load(csv="synthetic_pokemon.csv", image_path="./synthetic_images")
+train_dataset2, val_dataset2 = load(csv="synthetic_pokemon.csv", image_path="./images/synthetic_pokemon")
 
 model1 = custom_CNN_model((120,120,4))
 

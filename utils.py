@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-import tensorflow as tf
-from tensorflow.keras.utils import to_categorical
+#import tensorflow as tf
+#from tensorflow.keras.utils import to_categorical
 
 
 def load(csv, image_path):
@@ -116,8 +116,8 @@ def create_types_wildcard():
         for item in type_combinations:
             f.write("%s\n" % item)
 
-def create_csv_synthetic():
-    filelist = os.listdir('synthetic_images')
+def create_csv_synthetic(dataset_name = 'synthetic_images'):
+    filelist = os.listdir('images/'+dataset_name)
     name = []
     type1 = []
     type2 = []
@@ -132,7 +132,7 @@ def create_csv_synthetic():
 
     poke_dict = {'Name': name, 'Type1': type1, 'Type2': type2, 'Evolution': None}
     df = pd.DataFrame(poke_dict)
-    df.to_csv('synthetic_pokemon.csv', index=False)
+    df.to_csv(dataset_name+'.csv', index=False)
 
 def data_exploration(csv):
 
@@ -163,8 +163,8 @@ def data_exploration(csv):
     plt.show()
 
 if __name__ == '__main__':
-    #create_csv_synthetic()
-    #csv = "pokemon_image_dataset.csv"
-    #csv2 = "synthetic_pokemon.csv"
+    create_csv_synthetic(dataset_name='synthetic_pokemon')
+    csv = "pokemon_image_dataset.csv"
+    csv2 = "synthetic_pokemon.csv"
     #data_exploration(csv)
     pass
