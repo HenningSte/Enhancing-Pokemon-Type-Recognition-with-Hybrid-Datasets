@@ -51,6 +51,10 @@ def load(csv, image_path):
     # Convert the list of image arrays to a NumPy array (if all images have the same shape)
     image_batch = np.array(image_arrays)
 
+    # Convert RGBA images to RGB
+    if image_batch.shape[-1] == 4:
+        image_batch = compose_alpha(image_batch*255)
+
     dataset = tf.data.Dataset.from_tensor_slices((image_batch, label_batch))
 
     # Shuffle the dataset
@@ -71,33 +75,32 @@ def load(csv, image_path):
 
 def plot_history(histories):
     # Create a figure with two subplots: one for loss, one for accuracy
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axs = plt.subplots(len(histories), 2, figsize=(11, len(histories)*3))
+    if len(histories) == 1:
+        axs = [axs]
+    for i, (history, (ax1, ax2)) in enumerate(zip(histories,axs)):
+        # Iterate over each history and label to plot on the same figure
+        # Plot all metrics included in the history object
+        for key in history.history.keys():
+            # check if the key includes "val" or not
+            if 'val' in key:
+                ax2.plot(history.history[key], label='Model '+str(i+1)+' '+key)
+            else:
+                ax1.plot(history.history[key], label='Model '+str(i+1)+' '+key)
 
-    # Iterate over each history and label to plot on the same figure
-    for i, history in enumerate(histories):
-        
-        # Plot loss for both training and validation
-        ax1.plot(history.history['loss'], label='Model '+str(i+1)+' Training Loss')
-        ax1.plot(history.history['val_loss'], label='Model '+str(i+1)+' Validation Loss')
+        # Customize loss subplot
+        ax1.set_xlabel('Epoch')
+        ax1.set_ylabel('Loss/Accuracy')
+        ax1.set_title('Training Performance over Epochs')
+        ax1.legend()
+        ax1.set_xlim(left=0)  # Ensure the x-axis starts at 0
 
-        # Plot accuracy for both training and validation
-        ax2.plot(history.history['accuracy'], label='Model '+str(i+1)+' Training Accuracy')
-        ax2.plot(history.history['val_accuracy'], label='Model '+str(i+1)+' Validation Accuracy')
-
-    # Customize loss subplot
-    ax1.set_xlabel('Epoch')
-    ax1.set_ylabel('Loss')
-    ax1.set_title('Loss Over Epochs')
-    ax1.legend()
-    ax1.set_xlim(left=0)  # Ensure the x-axis starts at 0
-
-    # Customize accuracy subplot
-    ax2.set_xlabel('Epoch')
-    ax2.set_ylabel('Accuracy')
-    ax2.set_title('Accuracy Over Epochs')
-    ax2.legend()
-    ax2.set_xlim(left=0)  # Ensure the x-axis starts at 0
-
+        # Customize accuracy subplot
+        ax2.set_xlabel('Epoch')
+        ax2.set_ylabel('Loss/Accuracy')
+        ax2.set_title('Validation Performance over Epochs')
+        ax2.legend()
+        ax2.set_xlim(left=0)  # Ensure the x-axis starts at 0
     # Adjust layout and display the plot
     plt.tight_layout()
     plt.show()

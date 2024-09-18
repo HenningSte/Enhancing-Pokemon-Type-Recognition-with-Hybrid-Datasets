@@ -11,7 +11,7 @@ train_dataset2, val_dataset2 = load(csv="synthetic_pokemon.csv", image_path="./i
 
 train_dataset3, val_dataset3 = load(csv="synthetic_pokemon_v2.csv", image_path="./images/synthetic_pokemon_v2")
 
-model1 = custom_CNN_model((120,120,4))
+model1 = custom_CNN_model((120,120,3))
 
 model2 = custom_CNN_model((120,120,3))
 
