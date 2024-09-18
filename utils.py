@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-#import tensorflow as tf
-#from tensorflow.keras.utils import to_categorical
+import tensorflow as tf
+from tensorflow.keras.utils import to_categorical
 
 
 def load(csv, image_path):
@@ -162,9 +162,17 @@ def data_exploration(csv):
     plt.tight_layout()
     plt.show()
 
+def compose_alpha(image_with_alpha):
+    image_with_alpha = image_with_alpha.astype(np.float32)
+    image, alpha = image_with_alpha[..., :3], image_with_alpha[..., 3:] / 255.0
+    image = image * alpha + (1.0 - alpha) * 255.0
+    image = image.astype(np.uint8)
+    return image
+
 if __name__ == '__main__':
-    #create_csv_synthetic(dataset_name='synthetic_pokemon')
+    #create_csv_synthetic(dataset_name='synthetic_pokemon_v2')
     csv = "pokemon_image_dataset.csv"
     csv2 = "synthetic_pokemon.csv"
+    csv3 = "synthetic_pokemon_v2.csv"
     #data_exploration(csv)
     pass

@@ -9,15 +9,19 @@ train_dataset, val_dataset = load(csv="pokemon_image_dataset.csv", image_path=".
 
 train_dataset2, val_dataset2 = load(csv="synthetic_pokemon.csv", image_path="./images/synthetic_pokemon")
 
+train_dataset3, val_dataset3 = load(csv="synthetic_pokemon_v2.csv", image_path="./images/synthetic_pokemon_v2")
+
 model1 = custom_CNN_model((120,120,4))
 
 model2 = custom_CNN_model((120,120,3))
+
+model3 = custom_CNN_model((120,120,3))
 
 histories = []
 
 history1 = model1.fit(
     train_dataset,
-    epochs = 20,
+    epochs = 35,
     validation_data = val_dataset,
     verbose = 1
 )
@@ -30,5 +34,13 @@ history2 = model2.fit(
     verbose = 1
 )
 histories.append(history2)
+
+history3 = model3.fit(
+    train_dataset3,
+    epochs = 20,
+    validation_data = val_dataset3,
+    verbose = 1
+)
+histories.append(history3)
 
 plot_history(histories)
