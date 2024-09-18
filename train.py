@@ -29,7 +29,7 @@ histories.append(history1)
 
 history2 = model2.fit(
     train_dataset2,
-    epochs = 20,
+    epochs = 35,
     validation_data = val_dataset2,
     verbose = 1
 )
@@ -37,7 +37,7 @@ histories.append(history2)
 
 history3 = model3.fit(
     train_dataset3,
-    epochs = 20,
+    epochs = 35,
     validation_data = val_dataset3,
     verbose = 1
 )
