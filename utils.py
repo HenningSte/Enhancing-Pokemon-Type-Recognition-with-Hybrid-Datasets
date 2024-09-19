@@ -91,6 +91,7 @@ def plot_history(histories):
         # Customize loss subplot
         ax1.set_xlabel('Epoch')
         ax1.set_ylabel('Loss/Accuracy')
+        ax1.set_ylim(0.0,1.0)
         ax1.set_title('Training Performance over Epochs')
         ax1.legend()
         ax1.set_xlim(left=0)  # Ensure the x-axis starts at 0
@@ -98,6 +99,7 @@ def plot_history(histories):
         # Customize accuracy subplot
         ax2.set_xlabel('Epoch')
         ax2.set_ylabel('Loss/Accuracy')
+        ax2.set_ylim(0.0,1.0)
         ax2.set_title('Validation Performance over Epochs')
         ax2.legend()
         ax2.set_xlim(left=0)  # Ensure the x-axis starts at 0
@@ -169,7 +171,7 @@ def compose_alpha(image_with_alpha):
     image_with_alpha = image_with_alpha.astype(np.float32)
     image, alpha = image_with_alpha[..., :3], image_with_alpha[..., 3:] / 255.0
     image = image * alpha + (1.0 - alpha) * 255.0
-    image = image.astype(np.uint8)
+    image = image.astype(np.float32)
     return image
 
 if __name__ == '__main__':
