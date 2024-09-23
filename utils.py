@@ -53,7 +53,7 @@ def load(csv, image_path):
 
     # Convert RGBA images to RGB
     if image_batch.shape[-1] == 4:
-        image_batch = compose_alpha(image_batch*255)
+        image_batch = compose_alpha(image_batch)
 
     dataset = tf.data.Dataset.from_tensor_slices((image_batch, label_batch))
 
@@ -169,8 +169,8 @@ def data_exploration(csv):
 
 def compose_alpha(image_with_alpha):
     image_with_alpha = image_with_alpha.astype(np.float32)
-    image, alpha = image_with_alpha[..., :3], image_with_alpha[..., 3:] / 255.0
-    image = image * alpha + (1.0 - alpha) * 255.0
+    image, alpha = image_with_alpha[..., :3], image_with_alpha[..., 3:]
+    image = image * alpha + (1.0 - alpha)
     image = image.astype(np.float32)
     return image
 
