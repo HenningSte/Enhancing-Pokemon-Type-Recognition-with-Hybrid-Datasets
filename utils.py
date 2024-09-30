@@ -1,4 +1,4 @@
-# this file will include utility functions for loading the dataset, plotting, etc.
+# this file includes utility functions for loading the dataset, plotting, etc.
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,27 +6,43 @@ import numpy as np
 import os
 
 import tensorflow as tf
-from tensorflow.keras.utils import to_categorical
 
 
 def load(csv, image_path):
+    """
+    This function takes two path variables (strings) as inputs and combines the data found at both into a dataset
+
+    inputs:
+    -------
+    csv (str)           : path to the csv file to compute the labels from
+    image_path (str)    : path to the folder with all images
+
+    outputs:
+    --------
+    train_dataset (tf.data.Dataset) : training split of the full dataset
+    test_dataset (tf.data.Dataset)  : test split of the full dataset
+    """
+    # read and extract relevant information from the csv file
     df = pd.read_csv(csv)
     df = df.drop('Evolution', axis = 1)
     df = df.sort_values(by='Name')
     df = df.fillna('None')
     labels = df[['Type1', 'Type2']].values
 
+    # use string lookup to transform the labels from string into categorical representation
     string_lookup = tf.keras.layers.StringLookup()
 
     string_lookup.adapt([item for sublist in labels for item in sublist])
 
     categorical_labels = np.array([string_lookup(label) for label in labels])
 
+    # use the categorical labels and translate them into binary arrays with 18 entries, one for each possible type
     multi_labels = []
 
     for cat_label in categorical_labels:
         new_label = np.zeros(18, dtype=int)
         type1, type2 = cat_label
+        # use some workarounds for our specific categorical labels that will result in the mentioned binary array
         new_label[type1-2] = 1
         if type2 >= 2:
             new_label[type2-2] = 1
@@ -51,10 +67,11 @@ def load(csv, image_path):
     # Convert the list of image arrays to a NumPy array (if all images have the same shape)
     image_batch = np.array(image_arrays)
 
-    # Convert RGBA images to RGB
+    # Convert RGBA images to RGB since we can't combine them into hybrid datasets otherwise
     if image_batch.shape[-1] == 4:
         image_batch = compose_alpha(image_batch)
 
+    # create the dataset
     dataset = tf.data.Dataset.from_tensor_slices((image_batch, label_batch))
 
     # Shuffle the dataset
@@ -108,6 +125,9 @@ def plot_history(histories):
     plt.show()
 
 def create_types_wildcard():
+    """
+    This function creates type combinations that are later used for our stable diffusion to create the images
+    """
     pokemon_types = ['normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy']
     type_combinations = []
     for type in pokemon_types:
@@ -117,11 +137,15 @@ def create_types_wildcard():
             else:
                 type_combinations.append(type + ' ' + type2)
 
+    # save the combinations in some file e.g. .txt
     with open('pokemon_type_combinations.txt', 'w') as f:
         for item in type_combinations:
             f.write("%s\n" % item)
 
 def create_csv_synthetic(dataset_name = 'synthetic_images'):
+    """
+    This function creates the csv file for our synthetic datasets to be later used by load() to create the datasets
+    """
     filelist = os.listdir('images/'+dataset_name)
     name = []
     type1 = []
@@ -140,7 +164,9 @@ def create_csv_synthetic(dataset_name = 'synthetic_images'):
     df.to_csv(dataset_name+'.csv', index=False)
 
 def data_exploration(csv):
-
+    """
+    This function helps with observing and checking the generated data
+    """
     df = pd.read_csv(csv)
     df = df.drop('Evolution', axis = 1)
     df = df.sort_values(by='Name')
@@ -168,6 +194,9 @@ def data_exploration(csv):
     plt.show()
 
 def compose_alpha(image_with_alpha):
+    """
+    This function removes the alpha channel from RGBA images to reduce them to RGB images
+    """
     image_with_alpha = image_with_alpha.astype(np.float32)
     image, alpha = image_with_alpha[..., :3], image_with_alpha[..., 3:]
     image = image * alpha + (1.0 - alpha)

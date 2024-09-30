@@ -8,6 +8,7 @@ def own_custom_conv_net(input_shape):
         
         # Add some convolutional layers
         layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
+        # With some pooling layers
         layers.MaxPooling2D((2, 2)),
         
         layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
@@ -19,10 +20,10 @@ def own_custom_conv_net(input_shape):
         # Flatten the output
         layers.Flatten(),
         
-        # Dense layers
+        # Dense layer
         layers.Dense(64, activation='relu'),
 
-        # Two output layers for both types
+        # The final classification layer with sigmoid
         layers.Dense(18, activation='sigmoid'), 
     ])
 
@@ -37,7 +38,6 @@ def own_custom_conv_net(input_shape):
 
 # model from the linked github repo https://github.com/hemagso/Neuralmon from https://jgeekstudies.org/2017/03/12/who-is-that-neural-network/ 
 def neuralmon_conv_net(input_shape):
-    #Defining model Architecture
     model = models.Sequential([
             layers.Convolution2D(32, 5, 5, input_shape=input_shape),
             layers.Activation("relu"),
